@@ -1,55 +1,36 @@
-# ncview in a container
-#
-# docker run  --rm \
-#        -v /tmp/.X11-unix:/tmp/.X11-unix \
-#        -e DISPLAY=unix$DISPLAY \
-#        -v $HOME/ncview/.ncviewrc:/home/ncview/.ncviewrc \
-#        -v `pwd`:/home/ncview \
-# 	 weatherlab/ncview file_to_be_display.nc
-#
-
-FROM debian:stretch
+FROM centos:centos7
 LABEL maintainer "Xin Zhang <Xin.l.Zhang@noaa.gov>"
 
-RUN apt-get update && apt-get install -y \
-    csh ksh wget vim curl autoconf automake python-dev gcc g++ gfortran make cmake git openssh-server libxerces-c-dev libblas-dev liblapack-dev libnetcdf-dev libnetcdff-dev libhdf5-dev libexpat1-dev libudunits2-dev libopenmpi-dev openmpi-bin libhdf5-openmpi-dev xserver-xorg-dev libxaw7-dev \
-    --no-install-recommends \
-    && rm -rf /var/lib/apt/lists/* 
+RUN yum update -y && \
+    yum install -y epel-release yum-axelget && \
+    yum groupinstall -y "Development Tools" && \
+    yum install -y blas-devel lapack-devel libpng-devel libjasper-devel time openmpi openmpi-devel nco ncview netcdf-devel netcdf-fortran-devel gvMagick eog gdal ftp \
+                   which wget csh ksh fontconfig libXext libXrender ImageMagick expat-devel openssl-devel eigen3-devel freetype-devel && \
+    #yum install -y centos-release-scl && \
+    #yum install -y devtoolset-7-gcc* && \
+    #update-alternatives --install /usr/bin/gcc gcc /opt/rh/devtoolset-7/root/usr/bin/gcc 50 && \
+    #update-alternatives --install /usr/bin/g++ g++ /opt/rh/devtoolset-7/root/usr/bin/g++ 50 && \
+    #update-alternatives --install /usr/bin/gfortran gfortran /opt/rh/devtoolset-7/root/usr/bin/gfortran 50 && \
+    yum clean all && \
+    update-alternatives --install /usr/include/netcdf.mod netcdf.mod /usr/lib64/gfortran/modules/netcdf.mod 50 && \
+    update-alternatives --install /usr/lib/libnetcdf.so libnetcdf.so /usr/lib64/libnetcdf.so 50 && \
+    update-alternatives --install /usr/lib/libnetcdff.so libnetcdff.so /usr/lib64/libnetcdff.so 50 && \
+    echo "module load mpi/openmpi-x86_64"  >> /etc/profile
 
-RUN update-alternatives --install /usr/lib/libnetcdf.so libnetcdf.so /usr/lib/x86_64-linux-gnu/libnetcdf.so 50 \
-    && update-alternatives --install /usr/lib/libnetcdff.so libnetcdff.so /usr/lib/x86_64-linux-gnu/libnetcdff.so 50 \
-    && update-alternatives --install /usr/lib/libpng.so libpng.so /usr/lib/x86_64-linux-gnu/libpng.so 50 \
-    && update-alternatives --install /usr/lib/libz.so libz.so /usr/lib/x86_64-linux-gnu/libz.so 50
+RUN curl -SL https://ral.ucar.edu/sites/default/files/public/projects/ncar-docker-wrf/nclncarg-6.3.0.linuxcentos7.0x8664nodapgcc482.tar.gz | tar zxC /usr/local && \
+    wget https://cmake.org/files/v3.6/cmake-3.6.2.tar.gz && \
+    tar -zxvf cmake-3.6.2.tar.gz && \
+    cd cmake-3.6.2 && \
+    ./bootstrap --prefix=/usr/local && \
+    make -j`nproc` && \
+    make install && \
+    cd .. && \
+    rm -fr make-3.6.2.tar.gz cmake-3.6.2
+    
+#
+ENV NCARG_ROOT /usr/local
+ENV NETCDF /usr
+ENV PATH /usr/local/bin:$PATH
 
-ENV NETCDF=/usr
+CMD ["/bin/bash", "-l"]
 
-WORKDIR /usr/local
-COPY CMake /usr/local/CMake
-COPY CMakeLists.txt /usr/local
-RUN mkdir -p build \
-    && cd build \
-    && rm -fr * \
-    && cmake -DBUILD_OMPI=OFF -DCMAKE_INSTALL_PREFIX=/usr .. \
-    && make -j`nproc` \
-    && cd /usr/local \
-    && rm -fr CMake* build downloads \
-    && update-alternatives --install /usr/lib/libjasper.so libjasper.so /usr/local/lib/libjasper.so 50 \
-    && curl -O ftp://cirrus.ucsd.edu/pub/ncview/ncview-2.1.7.tar.gz \
-    && tar xvf ncview-2.1.7.tar.gz \
-    && rm -f ncview-2.1.7.tar.gz \
-    && cd ncview-2.1.7 \
-    && ./configure CC=/usr/bin/cc \
-    && make \
-    && make install \
-    && cd .. \
-    && rm -fr ncview-2.1.7
-
-
-#ENV HOME /home/lasw
-#RUN useradd --create-home --home-dir $HOME lasw \
-#	&& chown -R lasw:lasw $HOME
-
-#WORKDIR $HOME
-#USER lasw
-
-CMD ["/bin/bash" , "-l"]
