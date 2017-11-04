@@ -31,6 +31,16 @@ RUN curl -SL https://ral.ucar.edu/sites/default/files/public/projects/ncar-docke
 ENV NCARG_ROOT /usr/local
 ENV NETCDF /usr
 ENV PATH /usr/local/bin:$PATH
+ENV MPI_INCLUDE /usr/include/openmpi-x86_64
+ENV MPI_PYTHON_SITEARCH /usr/lib64/python2.7/site-packages/openmpi
+ENV MPI_LIB /usr/lib64/openmpi/lib
+ENV MPI_BIN /usr/lib64/openmpi/bin
+ENV MPI_COMPILER openmpi-x86_64
+ENV MPI_SYSCONFIG /etc/openmpi-x86_64
+ENV MPI_SUFFIX _openmpi
+ENV MPI_MAN /usr/share/man/openmpi-x86_64
+ENV MPI_HOME /usr/lib64/openmpi
+ENV MPI_FORTRAN_MOD_DIR /usr/lib64/gfortran/modules/openmpi-x86_64
 
 CMD ["/bin/bash", "-l"]
 
