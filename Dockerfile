@@ -30,7 +30,8 @@ RUN curl -SL https://ral.ucar.edu/sites/default/files/public/projects/ncar-docke
 #
 ENV NCARG_ROOT /usr/local
 ENV NETCDF /usr
-ENV PATH /usr/local/bin:$PATH
+ENV PATH /usr/lib64/openmpi/bin:/usr/local/bin:$PATH
+ENV LD_LIBRARY_PATH /usr/lib64/openmpi/lib
 ENV MPI_INCLUDE /usr/include/openmpi-x86_64
 ENV MPI_PYTHON_SITEARCH /usr/lib64/python2.7/site-packages/openmpi
 ENV MPI_LIB /usr/lib64/openmpi/lib
