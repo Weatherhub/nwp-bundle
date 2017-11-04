@@ -12,7 +12,7 @@ RUN yum update -y && \
     #update-alternatives --install /usr/bin/g++ g++ /opt/rh/devtoolset-7/root/usr/bin/g++ 50 && \
     #update-alternatives --install /usr/bin/gfortran gfortran /opt/rh/devtoolset-7/root/usr/bin/gfortran 50 && \
     yum clean all && \
-    update-alternatives --install /usr/include/netcdf.mod netcdf.mod /usr/lib64/gfortran/modules/netcdf.mod 50 && \
+    cp /usr/lib64/gfortran/modules/netcdf.mod /usr/include/netcdf.mod  && \
     update-alternatives --install /usr/lib/libnetcdf.so libnetcdf.so /usr/lib64/libnetcdf.so 50 && \
     update-alternatives --install /usr/lib/libnetcdff.so libnetcdff.so /usr/lib64/libnetcdff.so 50 && \
     echo "module load mpi/openmpi-x86_64"  >> /etc/profile
