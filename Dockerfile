@@ -1,5 +1,5 @@
 FROM centos:centos7
-LABEL maintainer "Xin Zhang <Xin.l.Zhang@noaa.gov>"
+LABEL maintainer "Xin Zhang <xin.zhang@longrunweather.com>"
 
 RUN yum update -y && \
     yum install -y epel-release yum-axelget && \
