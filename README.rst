@@ -23,9 +23,10 @@ The libraries include
 #. ImageMagick
 
 .. note:: 在编译WPS和WRF时，请使用如下选项：
+.. code:: 
 
    #
-   #   Settings for Linux x86_64, gfortran    (dmpar) 
+   #   Settings for **Linux x86_64**, **gfortran**    (**dmpar**) 
    #
    #
    COMPRESSION_LIBS    = **-L/usr/lib64 -ljasper -lpng -lz**
@@ -36,7 +37,7 @@ The libraries include
    DM_CC               = mpicc **-DMPI2_SUPPORT**
 
 
-.. note:: 在Docker container 使用mpirun并行运行WPS和WRF时，请加入选项**--allow-run-as-root**：
+.. note:: 在Docker container内使用mpirun并行运行WPS和WRF时，请加入选项**--allow-run-as-root**：
 
 
 .. image:: https://g.codefresh.io/api/badges/build?repoOwner=weatherlab&repoName=nwp-bundle&branch=master&pipelineName=nwp-bundle&accountName=weatherhub&type=cf-1 
